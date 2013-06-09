@@ -15,11 +15,11 @@ public:
     huffman_zipper(const huffman_zipper& orig);
     void set_buffer_size(unsigned int buffer_size);
     unsigned int get_buffer_size();
-//    unsigned int encode_string(char * src, char * dest, int src_len = -1);
-//    unsigned int decode_string(char * src, char * dest);
+    unsigned int encode_string(char * src, char * dest, int src_len = -1);
+    unsigned int decode_string(char * src, char * dest);
 //    void encode_file(char * src_path, char * dest_path);
 //    void decode_file(char * src_path, char * dest_path);
-//    virtual ~huffman_zipper();
+    virtual ~huffman_zipper();
 private:
     unsigned int buffer_size;
 };
