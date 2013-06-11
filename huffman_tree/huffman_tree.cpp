@@ -13,7 +13,9 @@
 #include <iostream>
 #include <stdlib.h>
 #include <math.h>
-#include <cstdlib>
+#include <cstring>
+
+using namespace std;
 
 //@TODO Uncomment, when dynamic huffman
 //huffman_tree::huffman_tree() {
@@ -24,23 +26,23 @@
 //    _init(freqs);
 //}
 
-huffman_tree::huffman_tree(unsigned long long * initialFrequencies) {
+huffman_tree::huffman_tree(const unsigned long long * initialFrequencies) {
     _init(initialFrequencies);
 }
 
-huffman_tree::huffman_tree(char * bytes, unsigned int & bit_offset) {
+huffman_tree::huffman_tree(const char * bytes, unsigned int & bit_offset) {
     root = NULL;
     read_serialized(bytes, bit_offset);
 }
 
-huffman_tree::huffman_tree(char * bytes, unsigned int bit_offset, unsigned short & shift) {
+huffman_tree::huffman_tree(const char * bytes, unsigned int bit_offset, unsigned short & shift) {
     root = NULL;
     read_serialized(bytes, bit_offset, shift);
 }
 
-void huffman_tree::_init(unsigned long long * initialFrequencies) {
+void huffman_tree::_init(const unsigned long long * initialFrequencies) {
     node_next_id = 1;
-    std::set<huffman_tree_node_pt, compare> set;
+    set<huffman_tree_node_pt, compare> set;
     for (int _char = 0; _char < 256; _char++) {
         int freq = initialFrequencies[_char];
         mapping[_char] = NULL;
@@ -68,11 +70,11 @@ bool huffman_tree::compare::operator ()(const huffman_tree_node_pt& x, const huf
     return *x<*y;
 }
 
-unsigned short huffman_tree::write_code(unsigned char _char, char * buffer, unsigned int bit_offset) {
+unsigned short huffman_tree::write_code(unsigned char _char, char * buffer, unsigned int bit_offset) const {
     return write_code(mapping[_char], buffer, bit_offset);
 }
 
-unsigned short huffman_tree::write_code(huffman_tree_node_pt node, char * buffer, unsigned int bit_offset) {
+unsigned short huffman_tree::write_code(huffman_tree_node_pt node, char * buffer, unsigned int bit_offset) const{
     huffman_tree_node_pt parent;
     unsigned short cnt = 0;
     while ((parent = node->parent) != NULL) {
@@ -84,7 +86,7 @@ unsigned short huffman_tree::write_code(huffman_tree_node_pt node, char * buffer
     return cnt;
 }
 
-unsigned short huffman_tree::write_eof_code(char* buffer, unsigned int bit_offset) {
+unsigned short huffman_tree::write_eof_code(char* buffer, unsigned int bit_offset) const {
     return write_code(eofNode, buffer, bit_offset);
 }
 
@@ -95,7 +97,7 @@ void huffman_tree::set_bit(char * code, unsigned int bit_offset, bool bit) {
         code[bit_offset / 8] &= ~(1 << bit_offset % 8);
 }
 
-bool huffman_tree::get_bit(char * code, unsigned int bit_offset) {
+bool huffman_tree::get_bit(const char * code, unsigned int bit_offset) {
     return code[bit_offset / 8] & (1 << bit_offset % 8);
 }
 
@@ -110,11 +112,19 @@ void huffman_tree::reverse_bits(char * code, unsigned int bit_offset, unsigned i
     }
 }
 
-void huffman_tree::print_tree_debug_info() {
+void huffman_tree::inc_frequencies(const char * bytes, unsigned long long * freqs, bool erase_previous, int str_len) {
+    if (erase_previous) memset(freqs, 0, sizeof (unsigned long long)*256);
+    if (str_len < 0) str_len = strlen(bytes);
+    for (int i = 0; i < str_len; i++) {
+        freqs[(unsigned char) bytes[i]]++;
+    }
+}
+
+void huffman_tree::print_tree_debug_info() const {
     root->debug_print();
 }
 
-huffman_tree_node_pt huffman_tree::find_by_code(char * code, unsigned int bit_offset, unsigned short & shift) {
+huffman_tree_node_pt huffman_tree::find_by_code(const char * code, unsigned int bit_offset, unsigned short & shift) const {
     shift = 0;
     huffman_tree_node_pt node = root;
     while (!node->is_terminal())
@@ -122,21 +132,21 @@ huffman_tree_node_pt huffman_tree::find_by_code(char * code, unsigned int bit_of
     return node;
 }
 
-huffman_tree_node_pt huffman_tree::find_by_code(char * code, unsigned int & bit_offset) {
+huffman_tree_node_pt huffman_tree::find_by_code(const char * code, unsigned int & bit_offset) const{
     unsigned short shift;
     huffman_tree_node_pt node = find_by_code(code, bit_offset, shift);
     bit_offset += shift;
     return node;
 }
 
-short huffman_tree::get_char(char * code, unsigned int & bit_offset) {
+short huffman_tree::get_char(const char * code, unsigned int & bit_offset) const {
     unsigned short shift;
     huffman_tree_node_pt node = find_by_code(code, bit_offset, shift);
     bit_offset += shift;
     return node == eofNode ? -1 : node->value;
 }
 
-short huffman_tree::get_char(char* code, unsigned int bit_offset, unsigned short & shift) {
+short huffman_tree::get_char(const char* code, unsigned int bit_offset, unsigned short & shift) const{
     huffman_tree_node_pt node = find_by_code(code, bit_offset, shift);
     return node == eofNode ? -1 : node->value;
 }
@@ -145,13 +155,13 @@ unsigned short huffman_tree::write_serialized(char* buffer, unsigned int bit_off
     return root->write_serialized(buffer, bit_offset);
 }
 
-void huffman_tree::read_serialized(char * bytes, unsigned int & bit_offset) {
+void huffman_tree::read_serialized(const char * bytes, unsigned int & bit_offset) {
     unsigned short shift;
     read_serialized(bytes, bit_offset, shift);
     bit_offset += shift;
 }
 
-void huffman_tree::read_serialized(char * bytes, unsigned int bit_offset, unsigned short & shift) {
+void huffman_tree::read_serialized(const char * bytes, unsigned int bit_offset, unsigned short & shift) {
     delete root;
     root = new huffman_tree_node;
     shift = root->read_serialized(bytes, bit_offset, &eofNode, &mapping[0]);

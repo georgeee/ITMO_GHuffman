@@ -19,6 +19,8 @@
 #define BOOST_MAIN
 #include <boost/test/unit_test.hpp>
 
+#define HUFFMAN_TREE_TESTS_STR_MAX_LEN 100000
+
 using namespace std;
 
 void test_build_serialize(char * str, char * check_value, bool print_debug = false, int str_len = -1) {
@@ -40,13 +42,12 @@ void test_build_serialize(char * str, char * check_value, bool print_debug = fal
 BOOST_AUTO_TEST_CASE(test_build_serialize_sizes) {
     srand(time(0));
     unsigned long long * freqs = new unsigned long long [256];
-    for (int n = 10; n < 10000; n *= 4) {
-        char * str = new char[n + 1];
-        str[n] = 0;
+    for (int n = 10; n < HUFFMAN_TREE_TESTS_STR_MAX_LEN; n *= 4) {
+        char * str = new char[n];
         for (int i = 0; i < n; ++i) {
-            str[i] = rand() % 256;
+            str[i] = rand();
         }
-        huffman_tree::inc_frequencies(str, freqs, 1);
+        huffman_tree::inc_frequencies(str, freqs, 1, n);
         huffman_tree ht(freqs);
         int symbol_cnt = 0;
         for (int i = 0; i < 256; ++i) symbol_cnt += freqs[i] > 0;
@@ -142,13 +143,12 @@ BOOST_AUTO_TEST_CASE(test_encode_decode_predefined_strings) {
 
 BOOST_AUTO_TEST_CASE(test_encode_decode_random_strings) {
     srand(time(0));
-    for (int n = 10; n < 10000; n *= 4) {
-        char * str = new char[n + 1];
-        str[n] = 0;
+    for (int n = 10; n < HUFFMAN_TREE_TESTS_STR_MAX_LEN; n *= 4) {
+        char * str = new char[n];
         for (int i = 0; i < n; ++i) {
-            str[i] = rand() % 256;
+            str[i] = rand();
         }
-        test_encode_decode(str);
+        test_encode_decode(str, n);
         delete[] str;
     }
 }
@@ -215,13 +215,12 @@ BOOST_AUTO_TEST_CASE(test_unserialize_tree_predefined_strings) {
 
 BOOST_AUTO_TEST_CASE(test_unserialize_tree_random_strings) {
     srand(time(0));
-    for (int n = 10; n < 10000; n *= 4) {
-        char * str = new char[n + 1];
-        str[n] = 0;
+    for (int n = 10; n < HUFFMAN_TREE_TESTS_STR_MAX_LEN; n *= 4) {
+        char * str = new char[n];
         for (int i = 0; i < n; ++i) {
-            str[i] = rand() % 256;
+            str[i] = rand();
         }
-        test_unserialize_tree(str);
+        test_unserialize_tree(str, n);
         delete[] str;
     }
 }
@@ -269,13 +268,12 @@ BOOST_AUTO_TEST_CASE(test_copy_tree_predefined_strings) {
 
 BOOST_AUTO_TEST_CASE(test_copy_tree_random_strings) {
     srand(time(0));
-    for (int n = 10; n < 10000; n *= 4) {
-        char * str = new char[n + 1];
-        str[n] = 0;
+    for (int n = 10; n < HUFFMAN_TREE_TESTS_STR_MAX_LEN; n *= 4) {
+        char * str = new char[n];
         for (int i = 0; i < n; ++i) {
-            str[i] = rand() % 256;
+            str[i] = rand();
         }
-        test_copy_tree(str);
+        test_copy_tree(str, n);
         delete[] str;
     }
 }

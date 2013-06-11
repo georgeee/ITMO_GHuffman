@@ -10,6 +10,9 @@
 #include <utility>
 #include <bitset>
 
+
+using namespace std;
+
 #include "huffman_tree_node.h"
 
 #ifndef HUFFMAN_TREE_H
@@ -29,20 +32,20 @@ public:
      * 
      * @param initialFrequencies int[256], frequencies of symbols (for "aaaab" string initialFrequencies[(unsigned char)'a'] = 4)
      */
-    huffman_tree(unsigned long long * initialFrequencies);
+    huffman_tree(const unsigned long long * initialFrequencies);
     /**
      * Reads serialized huffman tree from bytes
      * @param bytes
      * @param bit_offset
      */
-    huffman_tree(char * bytes, unsigned int & bit_offset);
+    huffman_tree(const char * bytes, unsigned int & bit_offset);
     /**
      * Reads serialized huffman tree from bytes
      * @param bytes
      * @param bit_offset
      * @param shift
      */
-    huffman_tree(char * bytes, unsigned int bit_offset, unsigned short & shift);
+    huffman_tree(const char * bytes, unsigned int bit_offset, unsigned short & shift);
     /**
      * Copies other huffman tree into self.
      * For purpose of copying serialization is being in use
@@ -63,7 +66,7 @@ public:
      * @param bit_offset
      * @return 
      */
-    static bool get_bit(char * code, unsigned int bit_offset);
+    static bool get_bit(const char * code, unsigned int bit_offset);
     /**
      * Reverses bits in code
      * @param code
@@ -72,7 +75,7 @@ public:
      */
     static void reverse_bits(char * code, unsigned int bit_offset, unsigned int cnt);
 
-    static void inc_frequencies(char * bytes, unsigned long long * freqs, bool erase_previous = false, int str_len = -1);
+    static void inc_frequencies(const char * bytes, unsigned long long * freqs, bool erase_previous = false, int str_len = -1);
     /**
      * Encodes char to huffman code, writes bits of code into buffer
      * @param _char char to encode
@@ -80,14 +83,14 @@ public:
      * @param bit_offset offset in bits in buffer
      * @return count of bits, the symbol's code occupies
      */
-    unsigned short write_code(unsigned char _char, char * buffer, unsigned int bit_offset);
+    unsigned short write_code(unsigned char _char, char * buffer, unsigned int bit_offset) const;
     /**
      * Encodes EOF char to huffman code, writes bits of code into buffer
      * @param buffer buffer, where we should put EOF character's code bits
      * @param bit_offset offset in bits in buffer
      * @return count of bits, the EOF symbol's code occupies
      */
-    unsigned short write_eof_code(char * buffer, unsigned int bit_offset);
+    unsigned short write_eof_code(char * buffer, unsigned int bit_offset) const;
 
     /**
      * 
@@ -97,7 +100,7 @@ public:
      * @return character, associated with the code (from 0 to 255, could be casted to char);
      *          -1 if eof symbol recieved 
      */
-    short get_char(char * code, unsigned int bit_offset, unsigned short & shift);
+    short get_char(const char * code, unsigned int bit_offset, unsigned short & shift) const;
     /**
      * 
      * @param code code bytes of symbol
@@ -105,7 +108,7 @@ public:
      * @return character, associated with the code (from 0 to 255, could be casted to char);
      *          -1 if eof symbol recieved 
      */
-    short get_char(char * code, unsigned int & bit_offset);
+    short get_char(const char * code, unsigned int & bit_offset) const;
 
     //@TODO Uncomment, when dynamic huffman
     //    /**
@@ -115,11 +118,11 @@ public:
     //     */
     //    void increase_char(unsigned char _char, unsigned int inrement = 1);
     //    void increase_eof_char(unsigned int inrement = 1);
-    
+
     /**
      * Prints some debug information about tree
      */
-    void print_tree_debug_info();
+    void print_tree_debug_info() const;
     /**
      * Writes serialized tree to buffer
      * @param buffer Buffer, in which we should write bytes of serialized tree
@@ -129,25 +132,25 @@ public:
     unsigned short write_serialized(char * buffer, unsigned int bit_offset) const;
 protected:
     huffman_tree_node_pt root;
-    unsigned short write_code(huffman_tree_node_pt node, char * code, unsigned int bit_offset);
+    unsigned short write_code(huffman_tree_node_pt node, char * code, unsigned int bit_offset) const;
 
     //@TODO Uncomment, when dynamic huffman
     //    void increase_node_weight(huffman_tree_node_pt node, unsigned int increment = 1);
 
-    huffman_tree_node_pt find_by_code(char * code, unsigned int bit_offset, unsigned short & shift);
-    huffman_tree_node_pt find_by_code(char * code, unsigned int & bit_offset);
+    huffman_tree_node_pt find_by_code(const char * code, unsigned int bit_offset, unsigned short & shift) const;
+    huffman_tree_node_pt find_by_code(const char * code, unsigned int & bit_offset) const;
     unsigned short node_next_id;
     huffman_tree_node_pt mapping[256];
     huffman_tree_node_pt eofNode;
-    void read_serialized(char * bytes, unsigned int & bit_offset);
-    void read_serialized(char * bytes, unsigned int bit_offset, unsigned short & shift);
+    void read_serialized(const char * bytes, unsigned int & bit_offset);
+    void read_serialized(const char * bytes, unsigned int bit_offset, unsigned short & shift);
 
     class compare {
     public:
         bool operator() (const huffman_tree_node_pt & x, const huffman_tree_node_pt & y) const;
     };
 private:
-    void _init(unsigned long long * initialFrequencies);
+    void _init(const unsigned long long * initialFrequencies);
 };
 
 

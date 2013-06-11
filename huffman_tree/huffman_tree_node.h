@@ -5,6 +5,9 @@
  * Created on 1 Июнь 2013 г., 1:22
  */
 
+
+using namespace std;
+
 #ifndef HUFFMAN_TREE_NODE_H
 #define	HUFFMAN_TREE_NODE_H
 
@@ -35,7 +38,7 @@ protected:
      * @return size of serialized tree in bits
      */
     unsigned short write_serialized(char * buffer, unsigned int bit_offset) const;
-    unsigned short read_serialized(char * bytes, unsigned int bit_offset, huffman_tree_node_pt * eofNode, huffman_tree_node_pt * mapping, huffman_tree_node_pt parent = NULL);
+    unsigned short read_serialized(const char * bytes, unsigned int bit_offset, huffman_tree_node_pt * eofNode, huffman_tree_node_pt * mapping, huffman_tree_node_pt parent = NULL);
 };
 typedef huffman_tree_node* huffman_tree_node_pt;
 

@@ -10,6 +10,9 @@
 #include "huffman_tree_node.h"
 #include "huffman_tree.h"
 
+
+using namespace std;
+
 void huffman_tree_node::_init(unsigned short id, unsigned long long weight, char value) {
     this->id = id;
     this->value = value;
@@ -52,9 +55,9 @@ huffman_tree_node::~huffman_tree_node() {
 }
 
 void huffman_tree_node::debug_print() const {
-    std::cout << id << ") weight: " << weight << ", char: " << value << " (" << (int) value << ")"
+    cout << id << ") weight: " << weight << ", char: " << value << " (" << (int) value << ")"
             << " left: " << (left_child == NULL ? -1 : left_child->id) << " right: " << (right_child == NULL ? -1 : right_child->id)
-            << " parent: " << (parent == NULL ? -1 : parent->id) << std::endl;
+            << " parent: " << (parent == NULL ? -1 : parent->id) << endl;
     if (left_child != NULL) left_child->debug_print();
     if (right_child != NULL) right_child->debug_print();
 }
@@ -79,7 +82,7 @@ unsigned short huffman_tree_node::write_serialized(char * buffer, unsigned int b
     return shift;
 }
 
-unsigned short huffman_tree_node::read_serialized(char * bytes, unsigned int bit_offset, huffman_tree_node_pt * eofNode, huffman_tree_node_pt * mapping, huffman_tree_node_pt parent) {
+unsigned short huffman_tree_node::read_serialized(const char * bytes, unsigned int bit_offset, huffman_tree_node_pt * eofNode, huffman_tree_node_pt * mapping, huffman_tree_node_pt parent) {
     unsigned short shift = 0;
     bool type_bit = huffman_tree::get_bit(bytes, bit_offset + shift++);
     this->parent = parent;
@@ -103,12 +106,4 @@ unsigned short huffman_tree_node::read_serialized(char * bytes, unsigned int bit
         shift += right_child->read_serialized(bytes, bit_offset + shift, eofNode, mapping, this);
     }
     return shift;
-}
-
-void huffman_tree::inc_frequencies(char * bytes, unsigned long long * freqs, bool erase_previous, int str_len) {
-    if (erase_previous) memset(freqs, 0, sizeof (unsigned long long)*256);
-    if (str_len < 0) str_len = strlen(bytes);
-    for (int i = 0; i < str_len; i++) {
-        freqs[(unsigned char) bytes[i]]++;
-    }
 }
