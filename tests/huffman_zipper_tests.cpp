@@ -89,6 +89,7 @@ int _file_size(const char * path) {
 void _file_put_bytes(const char * fpath, const char * bytes, int length = -1) {
     if (length < 0) length = strlen(bytes);
     FILE * fp = fopen(fpath, "w");
+    if(fp == NULL) throw -1;
     setbuf(fp, NULL);
     fwrite(bytes, 1, length, fp);
     fclose(fp);
@@ -97,6 +98,7 @@ void _file_put_bytes(const char * fpath, const char * bytes, int length = -1) {
 void _file_get_bytes(const char * fpath, char * bytes, int count = -1) {
     if (count < 0) count = _file_size(fpath);
     FILE * fp = fopen(fpath, "r");
+    if(fp == NULL) throw -1;
     setbuf(fp, NULL);
     fread(bytes, 1, count, fp);
     fclose(fp);
@@ -158,6 +160,7 @@ BOOST_AUTO_TEST_CASE(test_encode_decode_predefined_strings) {
 
 void test_encode_decode_string_from_file(const char * fpath, const char * encoded_path = NULL) {
     int fsize = _file_size(fpath);
+    if(fsize == 0) return;
     char dest_bytes[fsize + 1024];
     memset(dest_bytes, 0, (fsize + 1024) * sizeof (char));
     char bytes[fsize];
@@ -271,7 +274,7 @@ void test_encode_decode_file_from_str(char * str, int str_len = -1) {
         if (_file_exists(etmp)) remove(etmp);
         if (_file_exists(ndtmp)) remove(ndtmp);
     } else {
-        printf("Test failed: dtmp=%s etmp=%s ndtmp%s\n", dtmp, etmp, ndtmp);
+        printf("Test failed: dtmp=%s etmp=%s ndtmp=%s\n", dtmp, etmp, ndtmp);
     }
 }
 
