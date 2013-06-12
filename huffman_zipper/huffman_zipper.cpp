@@ -143,10 +143,10 @@ void huffman_zipper::decode_file(const char * src_path, const char * dest_path) 
                 if (ferror(dest_fp) != 0) throw huffman_zipper_file_io_exception(dest_path);
             }
             if (read_count > 0) {
-                byte_cnt -= buffer_size;
-                bit_cnt -= 8 * buffer_size;
-                memcpy(double_buffer, double_buffer + buffer_size, byte_cnt);
-                read_count = fread(double_buffer + byte_cnt, 1, buffer_size * 2 - byte_cnt, src_fp) + byte_cnt;
+                byte_cnt = bit_cnt / 8;
+                memcpy(double_buffer, double_buffer + byte_cnt, buffer_size * 2 - byte_cnt);
+                read_count = fread(double_buffer + buffer_size * 2 - byte_cnt, sizeof (char), byte_cnt, src_fp) + buffer_size * 2 - byte_cnt;
+                bit_cnt %= 8;
                 if (ferror(src_fp) != 0) throw huffman_zipper_file_io_exception(src_path);
             }
         }

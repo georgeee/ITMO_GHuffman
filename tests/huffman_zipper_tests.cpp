@@ -21,13 +21,14 @@
 #define BOOST_ALL_DYN_LINK
 #define BOOST_MAIN
 #include <boost/test/unit_test.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/path.hpp>
-namespace fs = boost::filesystem;
+
+//#include <boost/filesystem/operations.hpp>
+//#include <boost/filesystem/path.hpp>
+//namespace fs = boost::filesystem;
 
 using namespace std;
 
-#define HUFFMAN_ZIPPER_TESTS_STR_MAX_LEN 10000000
+#define HUFFMAN_ZIPPER_TESTS_STR_MAX_LEN 10000
 
 bool _file_exists(const char * path) {
     FILE * fp = fopen(path, "r");
@@ -155,49 +156,53 @@ BOOST_AUTO_TEST_CASE(test_encode_decode_predefined_strings) {
     test_encode_decode_string("Waiting for the sun...\0");
 }
 
-void test_encode_decode_string_from_file(const char * fpath) {
+void test_encode_decode_string_from_file(const char * fpath, const char * encoded_path = NULL) {
     int fsize = _file_size(fpath);
     char dest_bytes[fsize + 1024];
+    memset(dest_bytes, 0, (fsize + 1024) * sizeof (char));
     char bytes[fsize];
     _file_get_bytes(fpath, bytes, fsize);
     unsigned int dest_byte_cnt = test_encode_decode_string(bytes, fsize, dest_bytes);
-    fs::path orig_path(fpath);
-    fs::path enc_dir = orig_path.parent_path() / fs::path("encoded");
-    if (fs::exists(enc_dir) && fs::is_directory(enc_dir)) {
-        _file_put_bytes((enc_dir / orig_path.filename()).c_str(), dest_bytes, dest_byte_cnt);
+    //    fs::path orig_path(fpath);
+    //    fs::path enc_dir = orig_path.parent_path() / fs::path("encoded");
+    //    if (fs::exists(enc_dir) && fs::is_directory(enc_dir))
+    //      _file_put_bytes((enc_dir / orig_path.filename()).c_str(), dest_bytes, dest_byte_cnt);
+    if (encoded_path != NULL) {
+        _file_put_bytes(encoded_path, dest_bytes, dest_byte_cnt);
     }
 }
 
 BOOST_AUTO_TEST_CASE(test_encode_decode_string_predefined_files) {
-    fs::path dir("test_files_str");
-    if (fs::exists(dir) && fs::is_directory(dir)) {
-        fs::directory_iterator end_iter;
-        for (fs::directory_iterator dir_itr(dir); dir_itr != end_iter; ++dir_itr) {
-            try {
-                if (fs::is_regular_file(dir_itr->status())) {
-                    fs::path fpath_obj = dir_itr->path();
-                    const char * fpath = fpath_obj.native().c_str();
-                    test_encode_decode_string_from_file(fpath);
-                }
-            } catch (const std::exception & ex) {
-            }
-        }
-    }
-    //    test_encode_decode_string_from_file("test_files/rand_gen_1");
-    //    test_encode_decode_string_from_file("test_files/rand_gen_2");
+    //    fs::path dir("test_files_str");
+    //    if (fs::exists(dir) && fs::is_directory(dir)) {
+    //        fs::directory_iterator end_iter;
+    //        for (fs::directory_iterator dir_itr(dir); dir_itr != end_iter; ++dir_itr) {
+    //            try {
+    //                if (fs::is_regular_file(dir_itr->status())) {
+    //                    fs::path fpath_obj = dir_itr->path();
+    //                    const char * fpath = fpath_obj.native().c_str();
+    //                    test_encode_decode_string_from_file(fpath);
+    //                }
+    //            } catch (const std::exception & ex) {
+    //            }
+    //        }
+    //    }
+    test_encode_decode_string_from_file("test_files_str/rand_1", "test_files_str/encoded/rand_1");
+    test_encode_decode_string_from_file("test_files_str/rand_2", "test_files_str/encoded/rand_2");
+    test_encode_decode_string_from_file("test_files_str/rand_3", "test_files_str/encoded/rand_3");
 }
 
-//BOOST_AUTO_TEST_CASE(test_encode_decode_random_strings) {
-//    srand(time(0));
-//    for (int n = 10; n < HUFFMAN_ZIPPER_TESTS_STR_MAX_LEN; n *= 4) {
-//        char * str = new char[n];
-//        for (int i = 0; i < n; ++i) {
-//            str[i] = rand();
-//        }
-//        test_encode_decode_string(str, n);
-//        delete[] str;
-//    }
-//}
+BOOST_AUTO_TEST_CASE(test_encode_decode_random_strings) {
+    srand(time(0));
+    for (int n = 10; n < HUFFMAN_ZIPPER_TESTS_STR_MAX_LEN; n *= 4) {
+        char * str = new char[n];
+        for (int i = 0; i < n; ++i) {
+            str[i] = rand();
+        }
+        test_encode_decode_string(str, n);
+        delete[] str;
+    }
+}
 
 BOOST_AUTO_TEST_CASE(test_file_not_exists) {
     huffman_zipper hz;
@@ -303,33 +308,37 @@ BOOST_AUTO_TEST_CASE(test_encode_decode_file_predefined_strings) {
 }
 
 BOOST_AUTO_TEST_CASE(test_encode_decode_file_predefined_files) {
-    fs::path dir("test_files");
-    if (fs::exists(dir) && fs::is_directory(dir)) {
-        fs::directory_iterator end_iter;
-        for (fs::directory_iterator dir_itr(dir); dir_itr != end_iter; ++dir_itr) {
-            try {
-                if (fs::is_regular_file(dir_itr->status())) {
-                    fs::path fpath = dir_itr->path();
-                    const char * encoded_path = "aaa1";//NULL;
-//                    fs::path encoded_dir = fpath.parent_path() / fs::path("encoded");
-//                    if (fs::exists(encoded_dir) && fs::is_directory(encoded_dir))
-//                        encoded_path = (encoded_dir / fpath.filename()).c_str();
-                    test_encode_decode_file(fpath.native().c_str(), encoded_path);
-                }
-            } catch (const std::exception & ex) {
-            }
-        }
-    }
+    //        fs::path dir("test_files");
+    //        if (fs::exists(dir) && fs::is_directory(dir)) {
+    //            fs::directory_iterator end_iter;
+    //            for (fs::directory_iterator dir_itr(dir); dir_itr != end_iter; ++dir_itr) {
+    //                try {
+    //                    if (fs::is_regular_file(dir_itr->status())) {
+    //                        fs::path fpath = dir_itr->path();
+    //                        const char * encoded_path = NULL;
+    //                        fs::path encoded_dir = fpath.parent_path() / fs::path("encoded");
+    //                        if (fs::exists(encoded_dir) && fs::is_directory(encoded_dir))
+    //                            encoded_path = (encoded_dir / fpath.filename()).c_str();
+    //                        test_encode_decode_file(fpath.native().c_str(), encoded_path);
+    //                    }
+    //                } catch (const std::exception & ex) {
+    //                    throw ex;
+    //                }
+    //            }
+    //        }
+    test_encode_decode_file("test_files/rand_gen_1", "test_files/encoded/rand_gen_1");
+    test_encode_decode_file("test_files/rand_gen_2", "test_files/encoded/rand_gen_2");
+    test_encode_decode_string_from_file("test_files/rand_3", "test_files/encoded/rand_3");
 }
 
-//BOOST_AUTO_TEST_CASE(test_encode_decode_file_random_strings) {
-//    srand(time(0));
-//    for (int n = 10; n < HUFFMAN_ZIPPER_TESTS_STR_MAX_LEN; n *= 4) {
-//        char * str = new char[n];
-//        for (int i = 0; i < n; ++i) {
-//            str[i] = rand();
-//        }
-//        test_encode_decode_file_from_str(str, n);
-//        delete[] str;
-//    }
-//}
+BOOST_AUTO_TEST_CASE(test_encode_decode_file_random_strings) {
+    srand(time(0));
+    for (int n = 10; n < HUFFMAN_ZIPPER_TESTS_STR_MAX_LEN; n *= 4) {
+        char * str = new char[n];
+        for (int i = 0; i < n; ++i) {
+            str[i] = rand();
+        }
+        test_encode_decode_file_from_str(str, n);
+        delete[] str;
+    }
+}

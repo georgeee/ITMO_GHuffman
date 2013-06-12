@@ -4,6 +4,7 @@
  * 
  * Created on 1 Июнь 2013 г., 1:22
  */
+
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
