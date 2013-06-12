@@ -13,7 +13,7 @@ using namespace std;
 
 #include "huffman_zipper.h"
 #include "../huffman_tree/huffman_tree.h"
-#include "huffman_zipper_file_not_found_exception.h"
+#include "huffman_zipper_file_io_exception.h"
 
 huffman_zipper::huffman_zipper(unsigned int buffer_size) {
     this->buffer_size = buffer_size;

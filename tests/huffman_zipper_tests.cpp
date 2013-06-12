@@ -12,7 +12,7 @@
 #include <cstdio>
 #include "../huffman_zipper/huffman_zipper.h"
 #include "../huffman_tree/huffman_tree.h"
-#include "../huffman_zipper/huffman_zipper_file_not_found_exception.h"
+#include "../huffman_zipper/huffman_zipper_file_io_exception.h"
 
 
 
@@ -187,9 +187,9 @@ BOOST_AUTO_TEST_CASE(test_encode_decode_string_predefined_files) {
     //            }
     //        }
     //    }
-    test_encode_decode_string_from_file("test_files_str/rand_1", "test_files_str/encoded/rand_1");
-    test_encode_decode_string_from_file("test_files_str/rand_2", "test_files_str/encoded/rand_2");
-    test_encode_decode_string_from_file("test_files_str/rand_3", "test_files_str/encoded/rand_3");
+    test_encode_decode_string_from_file("test_files_str/rand_1", "test_files_str/encoded/rand_1.hz");
+    test_encode_decode_string_from_file("test_files_str/rand_2", "test_files_str/encoded/rand_2.hz");
+    test_encode_decode_string_from_file("test_files_str/rand_3", "test_files_str/encoded/rand_3.hz");
 }
 
 BOOST_AUTO_TEST_CASE(test_encode_decode_random_strings) {
@@ -326,9 +326,10 @@ BOOST_AUTO_TEST_CASE(test_encode_decode_file_predefined_files) {
     //                }
     //            }
     //        }
-    test_encode_decode_file("test_files/rand_gen_1", "test_files/encoded/rand_gen_1");
-    test_encode_decode_file("test_files/rand_gen_2", "test_files/encoded/rand_gen_2");
-    test_encode_decode_string_from_file("test_files/rand_3", "test_files/encoded/rand_3");
+    test_encode_decode_file("test_files/rand_gen_1", "test_files/encoded/rand_gen_1.hz");
+    test_encode_decode_file("test_files/rand_gen_2", "test_files/encoded/rand_gen_2.hz");
+    test_encode_decode_file("test_files/rand_3", "test_files/encoded/rand_3.hz");
+    test_encode_decode_file("test_files/linal.djvu", "test_files/encoded/linal.djvu.hz");
 }
 
 BOOST_AUTO_TEST_CASE(test_encode_decode_file_random_strings) {
