@@ -24,6 +24,7 @@ int main(int argc, char** argv) {
     int mode = HZIP_MODE_UNKNOWN;
     char * src_file;
     char * dest_file;
+    bool need_delete_ptr = false;
     int shift = 1;
     if(argc > shift){
         if(strcmp(argv[shift], "-e") == 0) mode = HZIP_MODE_ENCODE, ++shift;
@@ -37,6 +38,7 @@ int main(int argc, char** argv) {
             }else{
                 int len = strlen(src_file);
                 dest_file = new char[len+5];
+                need_delete_ptr = true;
                 if(mode == HZIP_MODE_DECODE){
                     strncpy ( dest_file, src_file, len-3);
                     dest_file[len-3] = 0;
@@ -54,13 +56,18 @@ int main(int argc, char** argv) {
         printf("Syntax:\nhzip [-e] src_file [dest_file]            Encodes src_file, saves into dest_file\n");
         printf("hzip -d src_file [dest_file]            Decodes src_file, saves into dest_file\n");
     }else{
-        huffman_zipper hz;
-        if(mode == HZIP_MODE_DECODE){
-            hz.decode_file(src_file, dest_file);
-        }else if(mode == HZIP_MODE_ENCODE){
-            hz.encode_file(src_file, dest_file);
+        try{
+            huffman_zipper hz;
+            if(mode == HZIP_MODE_DECODE){
+                hz.decode_file(src_file, dest_file);
+            }else if(mode == HZIP_MODE_ENCODE){
+                hz.encode_file(src_file, dest_file);
+            }
+        }catch(const huffman_zipper_file_io_exception & ex){
+            fprintf(stderr, "Error occured while operating with file: %s\n", ex.file);
         }
     }
+    if(need_delete_ptr) delete[] dest_file;
     return 0;
 }
 

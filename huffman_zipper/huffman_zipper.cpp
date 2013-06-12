@@ -27,11 +27,11 @@ void huffman_zipper::set_buffer_size(unsigned int buffer_size) {
     this->buffer_size = buffer_size;
 }
 
-unsigned int huffman_zipper::get_buffer_size() {
+unsigned int huffman_zipper::get_buffer_size() const{
     return buffer_size;
 }
 
-unsigned int huffman_zipper::encode_string(const char * src, char * dest, int src_len) {
+unsigned int huffman_zipper::encode_string(const char * src, char * dest, int src_len) const{
     unsigned long long * freqs = new unsigned long long[256];
     if (src_len < 0) src_len = strlen(src);
     huffman_tree::inc_frequencies(src, freqs, 1, src_len);
@@ -45,7 +45,7 @@ unsigned int huffman_zipper::encode_string(const char * src, char * dest, int sr
     return bit_offset / 8 + (bit_offset % 8 > 0);
 }
 
-unsigned int huffman_zipper::decode_string(const char * src, char * dest) {
+unsigned int huffman_zipper::decode_string(const char * src, char * dest) const{
     unsigned int bit_offset = 0;
     huffman_tree ht(src, bit_offset);
     unsigned int dest_length = 0;

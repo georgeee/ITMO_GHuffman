@@ -7,6 +7,7 @@ g++ -fPIC -c huffman_tree/huffman_tree_node.cpp -o build/huffman_tree_node.o
 g++ -fPIC -c huffman_zipper/huffman_zipper.cpp -o build/huffman_zipper.o
 
 g++ -shared -o dist/libHuffmanZipper.so build/huffman_tree.o build/huffman_tree_node.o build/huffman_zipper.o
+ar rvs dist/libHuffmanZipper.a build/huffman_tree.o build/huffman_tree_node.o build/huffman_zipper.o
 
 
 if [ ! -d dist/includes ]; then mkdir dist/includes; fi
@@ -17,5 +18,6 @@ cp huffman_zipper/huffman_zipper.h huffman_zipper/huffman_zipper_file_io_excepti
 cp huffman_tree/huffman_tree.h huffman_tree/huffman_tree_node.h dist/includes/huffman_tree
 
 g++ -o dist/hzip utilite.cpp  -lHuffmanZipper -Ldist
+g++ -o dist/hzip_static utilite.cpp  dist/libHuffmanZipper.a
 
 rm -R build

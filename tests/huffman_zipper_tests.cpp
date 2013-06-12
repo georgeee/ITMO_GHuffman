@@ -28,7 +28,7 @@
 
 using namespace std;
 
-#define HUFFMAN_ZIPPER_TESTS_STR_MAX_LEN 10000
+#define HUFFMAN_ZIPPER_TESTS_STR_MAX_LEN 3000
 
 bool _file_exists(const char * path) {
     FILE * fp = fopen(path, "r");

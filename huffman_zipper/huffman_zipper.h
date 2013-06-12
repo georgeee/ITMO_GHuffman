@@ -16,9 +16,9 @@ public:
     huffman_zipper(unsigned int buffer_size = 1024);
     huffman_zipper(const huffman_zipper& orig);
     void set_buffer_size(unsigned int buffer_size);
-    unsigned int get_buffer_size();
-    unsigned int encode_string(const char * src, char * dest, int src_len = -1);
-    unsigned int decode_string(const char * src, char * dest);
+    unsigned int get_buffer_size() const;
+    unsigned int encode_string(const char * src, char * dest, int src_len = -1) const;
+    unsigned int decode_string(const char * src, char * dest) const;
     void encode_file(const char * src_path, const char * dest_path) const;
     void decode_file(const char * src_path, const char * dest_path) const;
     virtual ~huffman_zipper();
